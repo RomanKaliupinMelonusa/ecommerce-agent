@@ -1,0 +1,2 @@
+patchedDependencies:
+  '@ai-sdk/react@1.2.8': patches/@ai-sdk__react@1.2.8.patch

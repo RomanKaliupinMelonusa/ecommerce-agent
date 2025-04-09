@@ -1,0 +1,52 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 3f83771f948a339e92cd793cb86258035673fa13..2f9354e30ee1564cdac6cf759eda15b7cdbf8d0e 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -1,3 +1,4 @@
++"use client";
+ // src/use-assistant.ts
+ import { isAbortError } from "@ai-sdk/provider-utils";
+ import {
+@@ -554,7 +555,6 @@ import {
+   callCompletionApi
+ } from "@ai-sdk/ui-utils";
+ import { useCallback as useCallback3, useEffect as useEffect3, useId, useRef as useRef3, useState as useState4 } from "react";
+-import useSWR2 from "swr";
+ function useCompletion({
+   api = "/api/completion",
+   id,
+@@ -572,14 +572,14 @@ function useCompletion({
+ } = {}) {
+   const hookId = useId();
+   const completionId = id || hookId;
+-  const { data, mutate } = useSWR2([api, completionId], null, {
++  const { data, mutate } = useSWR([api, completionId], null, {
+     fallbackData: initialCompletion
+   });
+-  const { data: isLoading = false, mutate: mutateLoading } = useSWR2(
++  const { data: isLoading = false, mutate: mutateLoading } = useSWR(
+     [completionId, "loading"],
+     null
+   );
+-  const { data: streamData, mutate: mutateStreamData } = useSWR2([completionId, "streamData"], null);
++  const { data: streamData, mutate: mutateStreamData } = useSWR([completionId, "streamData"], null);
+   const [error, setError] = useState4(void 0);
+   const completion = data;
+   const [abortController, setAbortController] = useState4(null);
+@@ -699,7 +699,6 @@ import {
+   parsePartialJson
+ } from "@ai-sdk/ui-utils";
+ import { useCallback as useCallback4, useId as useId2, useRef as useRef4, useState as useState5 } from "react";
+-import useSWR3 from "swr";
+ var getOriginalFetch2 = () => fetch;
+ function useObject({
+   api,
+@@ -715,7 +714,7 @@ function useObject({
+ }) {
+   const hookId = useId2();
+   const completionId = id != null ? id : hookId;
+-  const { data, mutate } = useSWR3(
++  const { data, mutate } = useSWR(
+     [api, completionId],
+     null,
+     { fallbackData: initialValue }
