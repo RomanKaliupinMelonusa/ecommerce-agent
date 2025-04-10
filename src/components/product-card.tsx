@@ -33,7 +33,7 @@ export function ProductCard({ product, append }: ProductCardProps) {
     <div className="border border-gray-200 rounded-lg p-4 m-2 shadow-sm flex flex-col items-center text-center bg-white max-w-xs transition-shadow hover:shadow-md">
       <div className="w-36 h-36 mb-4 relative">
         <Image
-          src={product.imageUrl || '/placeholder.png'}
+          src={product.imageUrl || null}
           alt={product.name}
           fill
           className="object-contain rounded"

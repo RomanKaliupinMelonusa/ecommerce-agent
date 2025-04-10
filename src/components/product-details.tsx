@@ -33,7 +33,7 @@ export function ProductDetails({ details }: { details: JewelryDetailsData }) {
       <div className="flex flex-col md:flex-row gap-8 mb-6 items-center">
         <div className="w-52 h-52 relative rounded-md border border-gray-200 shadow-sm flex-shrink-0">
           <Image
-            src={details.imageUrl || '/placeholder.png'}
+            src={details.imageUrl || null}
             alt={details.name}
             fill
             className="object-contain rounded-md"
