@@ -1,5 +1,4 @@
 import { SfccAuthConfig } from "@/interfaces/auth.types";
-import { ShopifyApiClient } from "@/lib/api/providers/shopify/client";
 
 /**
  * Retrieves the current ecommerce provider from the environment variable `ECOMMERCE_PROVIDER`.

@@ -6,7 +6,7 @@ interface CacheEntry<T> {
 }
 
 export class MemoryCacheService implements ICacheService {
-    private cache: Map<string, CacheEntry<any>> = new Map();
+    private cache: Map<string, CacheEntry<unknown>> = new Map();
     private timers: Map<string, NodeJS.Timeout> = new Map(); // To handle TTL expiration
 
     async get<T>(key: string): Promise<T | null> {

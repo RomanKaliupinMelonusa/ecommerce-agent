@@ -14,8 +14,8 @@ const TOKEN_LIFETIME_MARGIN_MS = 5 * 60 * 1000;
 
 // Custom Error for specific auth issues
 export class SfccAuthError extends Error {
-    public readonly details?: any;
-    constructor(message: string, details?: any) {
+    public readonly details?: unknown;
+    constructor(message: string, details?: unknown) {
         super(message);
         this.name = 'SfccAuthError';
         this.details = details; // Attach extra context if needed
@@ -82,9 +82,12 @@ export class SfccGuestAuthProvider {
         let response: Response;
         try {
             response = await this.httpClient.request(authEndpoint, requestOptions);
-        } catch (error: any) {
+        } catch (error: unknown) {
             await this.cache.delete(CACHE_KEY); // Invalidate cache on network/request error
-            throw new SfccAuthError(`Network or HTTP client error during SFCC auth request: ${error.message}`, error);
+            if (error instanceof Error) {
+                throw new SfccAuthError(`Network or HTTP client error during SFCC auth request: ${error.message}`, error);
+            }
+            throw new SfccAuthError(`Unknown error during SFCC auth request.`, error);
         }
 
         if (!response.ok) {
@@ -98,7 +101,7 @@ export class SfccGuestAuthProvider {
                 } else {
                      errorBody = await response.text();
                 }
-            } catch (parseError) {
+            } catch {
                 errorBody = `Failed to parse error body (Status: ${response.status}).`;
             }
             throw new SfccAuthError(`SFCC Auth API request failed: ${response.status} ${response.statusText}.`, { statusCode: response.status, body: errorBody });
@@ -108,8 +111,8 @@ export class SfccGuestAuthProvider {
         const authHeader = response.headers.get('Authorization');
         if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')) {
             await this.cache.delete(CACHE_KEY); // Invalidate cache on unexpected response
-            let responseBodyForDebug = {};
-            try { responseBodyForDebug = await response.json() as {}; } catch(_) {} // Try to get body for debug context
+        let responseBodyForDebug: unknown = {};
+            try { responseBodyForDebug = await response.json() as unknown; } catch {} // Try to get body for debug context
             throw new SfccAuthError('Bearer token not found or invalid in SFCC auth response header.', { responseBody: responseBodyForDebug });
         }
 
@@ -120,9 +123,12 @@ export class SfccGuestAuthProvider {
         // Cache the new token with calculated expiry
         try {
             await this.cache.set<CachedToken>(CACHE_KEY, { value: token, expiry: expiry }, this.assumedTokenLifetimeSeconds);
-        } catch (cacheError: any) {
-            // Log cache error but proceed; token is still valid for immediate use
-            console.error(`SFCC Guest Auth Provider: Failed to cache token: ${cacheError.message}`, cacheError);
+        } catch (cacheError: unknown) {
+            if (cacheError instanceof Error) {
+                console.error(`SFCC Guest Auth Provider: Failed to cache token: ${cacheError.message}`, cacheError);
+            } else {
+                console.error(`SFCC Guest Auth Provider: Failed to cache token.`, cacheError);
+            }
         }
 
         console.log("SFCC Guest Auth Provider: Successfully fetched and cached new API token.");
@@ -140,8 +146,12 @@ export class SfccGuestAuthProvider {
 
         try {
              cached = await this.cache.get<CachedToken>(CACHE_KEY);
-        } catch (cacheError: any) {
-             console.error(`SFCC Guest Auth Provider: Failed to retrieve token from cache: ${cacheError.message}`, cacheError);
+        } catch (cacheError: unknown) {
+             if (cacheError instanceof Error) {
+                 console.error(`SFCC Guest Auth Provider: Failed to retrieve token from cache: ${cacheError.message}`, cacheError);
+             } else {
+                 console.error(`SFCC Guest Auth Provider: Failed to retrieve token from cache.`, cacheError);
+             }
              // Proceed to fetch new token if cache read fails
         }
 

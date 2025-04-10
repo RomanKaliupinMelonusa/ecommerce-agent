@@ -36,9 +36,13 @@ function extractStock(availability?: SfccAvailability, inventory?: SfccAvailabil
     return av?.orderable ? 1 : 0;
 }
 
+interface SfccProductHitWithCustom extends SfccProductHit {
+    c_metalType?: string;
+}
+
 // Maps an SFCC search hit to the canonical JewelrySummary model
 export function mapSfccSearchHitToJewelrySummary(hit: SfccProductHit): JewelrySummary {
-    const productData = hit; // Use represented product if available
+    const productData = hit as SfccProductHitWithCustom; // Use represented product if available
 
     return {
         id: productData.product_id,
@@ -47,7 +51,7 @@ export function mapSfccSearchHitToJewelrySummary(hit: SfccProductHit): JewelrySu
         price: extractPrice(productData.price, productData.prices),
         currency: extractCurrency(productData.currency),
         // Add other summary fields if available directly in hit (e.g., metal type if customized)
-        metalType: (productData as any).c_metalType || undefined, // Example if custom attr is in search hit
+        metalType: productData.c_metalType || undefined, // Example if custom attr is in search hit
     };
 }
 
@@ -61,7 +65,7 @@ export function mapSfccDetailsResponseToJewelryDetails(details: SfccDetailsRespo
     // Map custom attributes (c_*) to specifications and potentially known fields
     for (const key in details) {
         if (key.startsWith('c_')) {
-            const value = (details as any)[key];
+            const value = (details as unknown as Record<string, unknown>)[key];
             const specKey = key.substring(2) // Remove 'c_'
                              .replace(/_/g, ' ') // Replace underscores with spaces
                              .replace(/([A-Z])/g, ' $1') // Add space before capitals

@@ -72,7 +72,7 @@ export interface SfccDetailsResponse {
 
     // Custom attributes (dynamic keys starting with c_)
     // Use index signature for flexibility, specific known ones can be added too
-    [key: `c_${string}`]: any;
+    [key: `c_${string}`]: string | number | boolean | undefined;
     c_metalType?: string; // Example specific custom attribute
     c_stoneType?: string; // Example specific custom attribute
     c_caratWeight?: number | string; // Example specific custom attribute
@@ -83,7 +83,7 @@ export interface SfccDetailsResponse {
     price_info?: SfccPriceInfo; // Alternative/detailed pricing
     availability?: SfccAvailability;
     inventory?: SfccAvailability; // Sometimes inventory info is nested here
-    variations?: any; // Define if needed
-    options?: any; // Define if needed
+    variations?: Record<string, unknown>; // Define if needed
+    options?: Record<string, unknown>; // Define if needed
     // Add other expanded fields as required
 }

@@ -1,6 +1,7 @@
-'use client';
+ 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 // Updated interface for Jewelry Details
 interface JewelryDetailsData {
@@ -30,12 +31,15 @@ export function ProductDetails({ details }: { details: JewelryDetailsData }) {
     <div className={`border border-gray-200 rounded-lg p-6 m-2 shadow-lg bg-gradient-to-br from-white to-gray-50 ${detailsMaxWidthClass} my-4 font-serif`}>
       <h2 className="text-3xl font-medium text-gray-800 mb-5 text-center">{details.name}</h2>
       <div className="flex flex-col md:flex-row gap-8 mb-6 items-center">
-        <img
-          src={details.imageUrl || ''}
-          alt={details.name}
-          className="w-52 h-52 object-contain rounded-md border border-gray-200 shadow-sm flex-shrink-0"
-          onError={(e) => { e.currentTarget.src = ''; }}
-        />
+        <div className="w-52 h-52 relative rounded-md border border-gray-200 shadow-sm flex-shrink-0">
+          <Image
+            src={details.imageUrl || '/placeholder.png'}
+            alt={details.name}
+            fill
+            className="object-contain rounded-md"
+            sizes="(max-width: 768px) 100vw, 13rem"
+          />
+        </div>
         <div className="flex-grow font-sans">
           <p className="text-2xl text-amber-700 mb-3">
             {details.price.toLocaleString(undefined, { style: 'currency', currency: details.currency || 'USD' })}
