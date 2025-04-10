@@ -2,6 +2,7 @@
 
 import React from 'react';
 import type { UseChatHelpers } from '@ai-sdk/react';
+import Image from 'next/image';
 
 // Updated interface for Jewelry Summary
 interface JewelrySummary {
@@ -30,12 +31,15 @@ export function ProductCard({ product, append }: ProductCardProps) {
   return (
     // Restyled card: lighter background, subtle shadow, gold/neutral accents
     <div className="border border-gray-200 rounded-lg p-4 m-2 shadow-sm flex flex-col items-center text-center bg-white max-w-xs transition-shadow hover:shadow-md">
-      <img
-        src={product.imageUrl || ''} // Use jewelry placeholder
-        alt={product.name}
-        className="w-36 h-36 object-contain mb-4 rounded" // Slightly larger image, maybe rounded
-        onError={(e) => { }}
-      />
+      <div className="w-36 h-36 mb-4 relative">
+        <Image
+          src={product.imageUrl || '/placeholder.png'}
+          alt={product.name}
+          fill
+          className="object-contain rounded"
+          sizes="(max-width: 640px) 100vw, 36rem"
+        />
+      </div>
       <h3 className="font-serif font-medium text-lg mb-1 text-gray-800">{product.name}</h3>
       {/* Display metal type if available */}
       {product.metalType && (

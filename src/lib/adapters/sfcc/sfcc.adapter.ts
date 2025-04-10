@@ -14,7 +14,7 @@ const DEFAULT_SEARCH_COUNT = 5; // Default number of items for search results
 
 // Custom Error for Adapter specific issues
 export class SfccAdapterError extends Error {
-    constructor(message: string, public details?: any) {
+    constructor(message: string, public details?: unknown) {
         super(message);
         this.name = 'SfccAdapterError';
     }
@@ -57,10 +57,13 @@ export class SfccAdapter implements IEcommerceAdapter {
         let authHeaders: AuthHeaders = {};
         try {
             authHeaders = await this.authProvider.getAuthHeaders();
-        } catch (authError: any) {
-            console.error("SFCC Adapter: Authentication failed.", authError);
-            // Rethrow as an adapter error for consistent handling upstream
-            throw new SfccAdapterError(`Authentication failed: ${authError.message}`, authError);
+        } catch (authError: unknown) {
+            if (authError instanceof Error) {
+                console.error("SFCC Adapter: Authentication failed.", authError);
+                throw new SfccAdapterError(`Authentication failed: ${authError.message}`, authError);
+            }
+            console.error("SFCC Adapter: Unknown authentication error.", authError);
+            throw new SfccAdapterError("Authentication failed due to an unknown error.", authError);
         }
 
         const defaultHeaders: Record<string, string> = {
@@ -82,10 +85,13 @@ export class SfccAdapter implements IEcommerceAdapter {
             const response = await this.httpClient.request(url, mergedOptions);
             console.log(`SFCC Adapter: Response status for ${url}: ${response.status}`);
             return response;
-        } catch (error: any) {
-            console.error(`SFCC Adapter: HTTP request failed for ${url}:`, error);
-             // Rethrow as an adapter error
-            throw new SfccAdapterError(`HTTP request failed: ${error.message}`, error);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error(`SFCC Adapter: HTTP request failed for ${url}:`, error);
+                throw new SfccAdapterError(`HTTP request failed: ${error.message}`, error);
+            }
+            console.error(`SFCC Adapter: Unknown HTTP error for ${url}:`, error);
+            throw new SfccAdapterError("HTTP request failed due to an unknown error.", error);
         }
     }
 
@@ -169,7 +175,7 @@ export class SfccAdapter implements IEcommerceAdapter {
 
         if (!response.ok) {
             let errorBody = '';
-            try { errorBody = await response.text(); } catch (_) {}
+            try { errorBody = await response.text(); } catch { }
             throw new SfccAdapterError(`SFCC search request failed: ${response.status} ${response.statusText}`, { statusCode: response.status, responseBody: errorBody });
         }
 
@@ -213,7 +219,7 @@ export class SfccAdapter implements IEcommerceAdapter {
 
         if (!response.ok) {
             let errorBody = '';
-            try { errorBody = await response.text(); } catch (_) {}
+            try { errorBody = await response.text(); } catch { }
             throw new SfccAdapterError(`SFCC details request failed: ${response.status} ${response.statusText}`, { productId, statusCode: response.status, responseBody: errorBody });
         }
 

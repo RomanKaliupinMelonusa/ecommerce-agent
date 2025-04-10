@@ -80,9 +80,13 @@ export async function POST(req: Request) {
 
                         console.log(`Tool: ecommerceAdapter.searchProducts returned ${validationResult.data.length} valid items.`);
                         return validationResult.data;
-                    } catch (error: any) {
-                        console.error("Error executing searchProducts tool:", error);
-                        return { error: `Sorry, I encountered an error while searching: ${error.message}` };
+                    } catch (error: unknown) {
+                        if (error instanceof Error) {
+                            console.error("Error executing searchProducts tool:", error);
+                            return { error: `Sorry, I encountered an error while searching: ${error.message}` };
+                        }
+                        console.error("Unknown error executing searchProducts tool:", error);
+                        return { error: "Sorry, an unknown error occurred while searching." };
                     }
                 }
             }),
@@ -103,9 +107,13 @@ export async function POST(req: Request) {
 
                         console.log(`Tool: ecommerceAdapter.getProductDetails returned ${validationResult.data ? 'details' : 'null'}.`);
                         return validationResult.data;
-                    } catch (error: any) {
-                        console.error("Error executing getProductDetails tool:", error);
-                        return { error: `Sorry, I encountered an error fetching details: ${error.message}` };
+                    } catch (error: unknown) {
+                        if (error instanceof Error) {
+                            console.error("Error executing getProductDetails tool:", error);
+                            return { error: `Sorry, I encountered an error fetching details: ${error.message}` };
+                        }
+                        console.error("Unknown error executing getProductDetails tool:", error);
+                        return { error: "Sorry, an unknown error occurred while fetching product details." };
                     }
                 }
             })

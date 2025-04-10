@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load .env file - adjust path if your test setup runs from a different directory
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 import { SfccAdapter } from './sfcc.adapter';
 import { SfccGuestAuthProvider } from './sfcc.auth'; // Real Auth Provider

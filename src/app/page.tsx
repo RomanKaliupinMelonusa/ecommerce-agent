@@ -6,7 +6,7 @@ import { ProductCardList } from '@/components/product-card-list'; // Import your
 import { ProductDetails } from '@/components/product-details';  // Import your component
 
 // --- Helper Function for rendering arguments (Keep this) ---
-const renderSearchArguments = (args: Record<string, any> | undefined | null) => {
+const renderSearchArguments = (args: Record<string, string | number | boolean> | undefined | null) => {
   if (!args) return null;
   const listItems = [];
   // ... (logic to build listItems array remains the same) ...
