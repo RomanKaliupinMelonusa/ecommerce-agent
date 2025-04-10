@@ -32,13 +32,15 @@ export function ProductCard({ product, append }: ProductCardProps) {
     // Restyled card: lighter background, subtle shadow, gold/neutral accents
     <div className="border border-gray-200 rounded-lg p-4 m-2 shadow-sm flex flex-col items-center text-center bg-white max-w-xs transition-shadow hover:shadow-md">
       <div className="w-36 h-36 mb-4 relative">
-        <Image
-          src={product.imageUrl || '/placeholder.png'}
-          alt={product.name}
-          fill
-          className="object-contain rounded"
-          sizes="(max-width: 640px) 100vw, 36rem"
-        />
+        {product.imageUrl ? (
+          <Image
+        src={product.imageUrl}
+        alt={product.name}
+        fill
+        className="object-contain rounded"
+        sizes="(max-width: 640px) 100vw, 36rem"
+          />
+        ) : null}
       </div>
       <h3 className="font-serif font-medium text-lg mb-1 text-gray-800">{product.name}</h3>
       {/* Display metal type if available */}
